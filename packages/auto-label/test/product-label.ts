@@ -23,7 +23,8 @@ import {resolve} from 'path';
 import fs from 'fs';
 import snapshot from 'snap-shot-it';
 import * as sinon from 'sinon';
-import {autoDetectLabel, handler, DriftRepo, DriftApi} from '../src/auto-label';
+import {handler} from '../src/auto-label';
+import * as product from '../src/product-label';
 import {logger} from 'gcf-utils';
 nock.disableNetConnect();
 const sandbox = sinon.createSandbox();
@@ -34,13 +35,13 @@ const driftRepos = JSON.parse(
     resolve(__dirname, '../../test/fixtures/events/downloadedfile.json'),
     'utf8'
   )
-).repos as DriftRepo[];
+).repos as product.DriftRepo[];
 const driftApis = JSON.parse(
   fs.readFileSync(
     resolve(__dirname, '../../test/fixtures/events/downloadedfile.json'),
     'utf8'
   )
-).repos as DriftApi[];
+).repos as product.DriftApi[];
 
 describe('auto-label', () => {
   let probot: Probot;
@@ -604,7 +605,10 @@ describe('auto-label', () => {
       for (const test of tests) {
         // driftRepos has the same format as apis.json. No need for a different
         // test file.
-        assert.strictEqual(autoDetectLabel(driftRepos, test.title), test.want);
+        assert.strictEqual(
+          product.autoDetectLabel(driftRepos, test.title),
+          test.want
+        );
       }
     });
   });
